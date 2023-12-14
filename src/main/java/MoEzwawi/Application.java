@@ -3,10 +3,7 @@ package MoEzwawi;
 import MoEzwawi.dao.EventDAO;
 import MoEzwawi.dao.ParticipationDAO;
 import MoEzwawi.dao.PersonDAO;
-import MoEzwawi.entities.Event;
-import MoEzwawi.entities.Location;
-import MoEzwawi.entities.Participation;
-import MoEzwawi.entities.Person;
+import MoEzwawi.entities.*;
 import MoEzwawi.entities.enums.EventType;
 import MoEzwawi.entities.enums.Gender;
 import MoEzwawi.entities.enums.ParticipationState;
@@ -17,6 +14,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Application {
     private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("events_management");
@@ -27,10 +26,12 @@ public class Application {
         EventDAO eventDAO = new EventDAO(em);
         PersonDAO personDAO = new PersonDAO(em);
         ParticipationDAO participationDAO = new ParticipationDAO(em);
+
         LocalDate aldosB = Event.parseDateForItaly("28/09/1958");
         LocalDate giovannisB = Event.parseDateForItaly("20/02/1957");
         LocalDate giacomosB = Event.parseDateForItaly("26/04/1956");
         LocalDate marinasB = Event.parseDateForItaly("16/05/1963");
+        LocalDate future = Event.parseDateForItaly("02/05/2024");
 
         Location piazza = new Location("Piazza","Bagnone");
         Location stadio = new Location("San Siro","Milano");
@@ -44,38 +45,16 @@ public class Application {
         personDAO.save(giovanni);
         personDAO.save(giacomo);
         personDAO.save(marina);
-        Event sagra = new Event("Sagra della cipolla",Event.parseDateForItaly("03/05/2024"),EventType.PUBLIC,piazza);
-        sagra.setMaximumCapacity(100);
-        sagra.setDescription("Cibi a base di cipolla");
-        Event partita = new Event("Partita del cuore",Event.parseDateForItaly("03/07/2024"),EventType.PUBLIC,stadio);
-        partita.setMaximumCapacity(40000);
-        partita.setDescription("Partita di beneficenza");
-        Event concerto = new Event("Concerto di musica classica",Event.parseDateForItaly("23/03/2024"),EventType.PRIVATE,teatro);
-        concerto.setMaximumCapacity(150);
-        concerto.setDescription("Musica di qualità");
-        eventDAO.save(sagra);
-        eventDAO.save(partita);
-        eventDAO.save(concerto);
-        Participation p1 = new Participation(aldo,sagra,ParticipationState.CONFIRMED);
-        Participation p2 = new Participation(giovanni,sagra,ParticipationState.CONFIRMED);
-        Participation p3 = new Participation(giacomo,sagra,ParticipationState.CONFIRMED);
-        Participation p4 = new Participation(marina,sagra,ParticipationState.PENDING);
-        Participation p5 = new Participation(marina,concerto,ParticipationState.CONFIRMED);
-        Participation p6 = new Participation(giovanni,concerto,ParticipationState.CONFIRMED);
-        Participation p7 = new Participation(giacomo,concerto,ParticipationState.PENDING);
-        Participation p8 = new Participation(aldo,partita,ParticipationState.CONFIRMED);
-        Participation p9 = new Participation(giovanni,partita,ParticipationState.CONFIRMED);
-        Participation p10 = new Participation(giacomo,partita,ParticipationState.CONFIRMED);
-        participationDAO.save(p1);
-        participationDAO.save(p2);
-        participationDAO.save(p3);
-        participationDAO.save(p4);
-        participationDAO.save(p5);
-        participationDAO.save(p6);
-        participationDAO.save(p7);
-        participationDAO.save(p8);
-        participationDAO.save(p9);
-        participationDAO.save(p10);
+        Event p = new PartitaDiCalcio("match",future,EventType.PUBLIC,stadio,"Atalanta","Villareal",4,1);
+        Set<Person> cast = new HashSet<>();
+        cast.add(aldo);
+        cast.add(giovanni);
+        cast.add(giacomo);
+        cast.add(marina);
+        Event a = new GaraDiAtletica("Gara",future,EventType.PRIVATE,piazza,cast,aldo);
+        eventDAO.save(p);
+        eventDAO.save(a);
+
         emf.close();
         em.close();
     }

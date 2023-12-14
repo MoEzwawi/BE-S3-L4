@@ -10,27 +10,27 @@ import java.util.List;
 import java.util.Locale;
 
 @Entity
-@Table(name = "Event")
-public class Event {
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public abstract class Event {
     @Id
     @Column(name = "event_code")
     @GeneratedValue
-    private long id;
+    protected long id;
     @Column(name = "event_title")
-    private String title;
+    protected String title;
     @Column(name = "event_date")
-    private LocalDate eventDate;
+    protected LocalDate eventDate;
     @Column(name = "event_description")
-    private String description;
+    protected String description;
     @Enumerated(EnumType.STRING)
     @Column(name = "event_type")
-    private EventType eventType;
+    protected EventType eventType;
     @Column(name = "venue_capacity")
-    private int maximumCapacity;
+    protected int maximumCapacity;
     @Embedded
-    private Location location;
+    protected Location location;
     @OneToMany(mappedBy = "event")
-    private List<Participation> listOfParticipations;
+    protected List<Participation> listOfParticipations;
     public Event(){
 
     }
